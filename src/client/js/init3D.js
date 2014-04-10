@@ -4,7 +4,7 @@ var cam_pitch = -11;
 var cam_yaw = 86;
 var cam_forward = [0,0,1];
 var move = [false,false,false,false];
-var MOVE_SPEED = 20.0;
+var MOVE_SPEED = 2.0;
 var heightOfNearPlane = 0;
 
 // pointcloud 
@@ -14,15 +14,16 @@ var cloud;
 function init(){
 
 
-	SOURCE_DIR = "../testdatasets/CCSR1/25000/";
+	SOURCE_DIR = "../testdatasets/CCSR1/5000/";
 	//data will need to be stored on same server to prevent Access-Control-Allow-Origin errors
 	//a test dataset can be found at 
 	//alunevans.info/apps/webgl/pointclouds/testdatasets/progpointstestdata.zip (66MB zip)
 
 	cam_pos = [-12, -17, -12.5]; 
 	cam_pitch = -44.8; cam_yaw = 240.4;
+	// cam_pos = [-1, 17, 0]; cam_pitch = -11; cam_yaw = 267;	
 
-	cloud = new PointCloud(6, 2.5, 3500000);
+	cloud = new PointCloud(6, 2.5, 3500000, 17);
 	cloud.initPointCloud(SOURCE_DIR, initGL);
 
 }
@@ -99,7 +100,7 @@ function initGL(stations)
 	
 	gl.onupdate = function(dt) {
 
-		stats.update();
+		//stats.update();
 
 		if (move[0]) {
 			var tmp = vec3.create();

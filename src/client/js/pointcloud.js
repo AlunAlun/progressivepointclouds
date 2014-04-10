@@ -1,7 +1,9 @@
-function PointCloud(minDepth, pointSize, maxBuffer){
+function PointCloud(minDepth, pointSize, maxBuffer, chSize, verb){
+	this.chunk = chSize || 17;
 	this.octreeMinDepth = minDepth || 6;
 	this.octreeMaxDepth = minDepth || 6;
 	this.POINT_SIZE_SCALE = pointSize || 2.5;
+	this.verbose = verb || false;
 	this.initDownloadList = [];
 	this.currFileNum = 0;
 	this.octreeArr = [];
@@ -9,6 +11,9 @@ function PointCloud(minDepth, pointSize, maxBuffer){
 	this.totalDrawBufferSize = 0;
 	this.currDrawBufferPosition = 0;
 	this.maxBuffer = maxBuffer || 3300000;
+	this.totalUpdateTime = 0;
+	this.maxUpdateTime = 0;
+	this.updates = 0;
 
 }
 
@@ -120,17 +125,17 @@ PointCloud.prototype.readOctreeBinFile = function(buffer) {
     var mask; var childbitMask; var theDepth;
 
 
-    for (var row = 0; row < (buffer.byteLength / 17); row ++) {
-    	theDepth = dataview.getUint8(row*17);
+    for (var row = 0; row < (buffer.byteLength / this.chunk); row ++) {
+    	theDepth = dataview.getUint8(row*this.chunk);
 
         // Copy floats
         for (var i = 0; i < 3; i++) 
-            mFloatArray[i] = dataview.getFloat32((row*17)+1+(i * 4), true);
+            mFloatArray[i] = dataview.getFloat32((row*this.chunk)+1+(i * 4), true);
         for (var i = 0; i < 3; i++) 
-            mIntArray[i] = dataview.getInt8((row*17)+13+i); 
+            mIntArray[i] = dataview.getInt8((row*this.chunk)+13+i); 
         
 
-        mask = dataview.getUint8((row*17)+16);
+        mask = dataview.getUint8((row*this.chunk)+16);
         childbitMask = "";
         for (var i = 0; i < 8; i++){
         	var bob = (mask & 1<<i)
@@ -155,7 +160,8 @@ PointCloud.prototype.countOctreeAtLevel = function(level) {
 }
 
 PointCloud.prototype.updateBinGeometry = function(newBuffer) {
-
+	if (this.verbose)
+		var start = window.performance.now();
 
 	var buffers = this.mesh.vertexBuffers;
 	var newBuffers = {};
@@ -165,7 +171,7 @@ PointCloud.prototype.updateBinGeometry = function(newBuffer) {
     var mIntArray = new Uint8Array(3);
     var mask; var childbitMask; var theDepth;
 
-	var newBufferLength = (newBuffer.byteLength / 17);
+	var newBufferLength = (newBuffer.byteLength / this.chunk);
 
 	for (var name in buffers)
 	{
@@ -182,19 +188,19 @@ PointCloud.prototype.updateBinGeometry = function(newBuffer) {
 
 	var lineData;
 	var newLeaf;
-	for (var row = 0; row < (newBuffer.byteLength / 17); row ++) {
+	for (var row = 0; row < (newBuffer.byteLength / this.chunk); row ++) {
 
 
-  		theDepth = dataview.getInt8(row*17);
+  		theDepth = dataview.getInt8(row*this.chunk);
 
         // Copy floats
         for (var i = 0; i < 3; i++) 
-            mFloatArray[i] = dataview.getFloat32((row*17)+1+(i * 4), true);
+            mFloatArray[i] = dataview.getFloat32((row*this.chunk)+1+(i * 4), true);
         for (var i = 0; i < 3; i++) 
-            mIntArray[i] = dataview.getUint8((row*17)+13+i); 
+            mIntArray[i] = dataview.getUint8((row*this.chunk)+13+i); 
         
 
-        mask = dataview.getUint8((row*17)+16);
+        mask = dataview.getUint8((row*this.chunk)+16);
         childbitMask = "";
         for (var i = 0; i < 8; i++){
         	var bob = (mask & 1<<i)
@@ -263,7 +269,14 @@ PointCloud.prototype.updateBinGeometry = function(newBuffer) {
 
 	this.currDrawBufferPosition+=tempDrawBufferPosition;
 
-	freeze = true;
+	if (this.verbose) {
+		var end = window.performance.now();
+		var time = end - start;
+		this.totalUpdateTime += time;
+		this.updates++;
+		if (time > this.maxUpdateTime) this.maxUpdateTime = time;
+		console.log(time + ". Max: " + this.maxUpdateTime + ". Average: "+ (this.totalUpdateTime/this.updates));
+	}
 }
 
 PointCloud.prototype.createGeometry = function() {
