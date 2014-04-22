@@ -3,6 +3,7 @@ function PointCloud(minDepth, pointSize, maxBuffer, chSize, verb){
 	this.octreeMinDepth = minDepth || 6;
 	this.octreeMaxDepth = minDepth || 6;
 	this.POINT_SIZE_SCALE = pointSize || 2.5;
+	this.point_size = 1;
 	this.verbose = verb || false;
 	this.initDownloadList = [];
 	this.currFileNum = 0;
@@ -14,6 +15,7 @@ function PointCloud(minDepth, pointSize, maxBuffer, chSize, verb){
 	this.totalUpdateTime = 0;
 	this.maxUpdateTime = 0;
 	this.updates = 0;
+
 
 }
 
@@ -27,7 +29,6 @@ function PointCloud(minDepth, pointSize, maxBuffer, chSize, verb){
 * @param {callback} function called after first data file is downloaded
 */
 PointCloud.prototype.initPointCloud = function(sourcedir, callback) {
-
 
 	var request = new XMLHttpRequest();
 	request.open('GET', sourcedir + 'index.oct', true);
@@ -50,7 +51,9 @@ PointCloud.prototype.initPointCloud = function(sourcedir, callback) {
 			mRequest.onload = function () {
 				if (mRequest.status >= 200 && mRequest.status < 400){
 					this.octreeArr = this.readOctreeBinFile(mRequest.response);
-					callback();
+					if(callback)
+						callback();
+					this.ready = true;
 					this.createGeometry();
 					this.startDownload();
 				}
@@ -65,6 +68,9 @@ PointCloud.prototype.startDownload = function() {
 	var filename = this.initDownloadList[this.currFileNum];
 	//console.log("TODO: add callback for when starting new file");
 
+	if(this.maxBuffer > 3.5e6)
+		this.maxBuffer = 3.5e6;
+
 	reqw = new XMLHttpRequest
 	reqw.open('GET', filename, true)
 	reqw.responseType = 'arraybuffer';
@@ -75,15 +81,11 @@ PointCloud.prototype.startDownload = function() {
 			this.updateBinGeometry(reqw.response);
 
 			
-			if (this.currFileNum < this.initDownloadList.length && this.octreeArr.length < 3300000) {
+			if (this.currFileNum < this.initDownloadList.length && this.octreeArr.length < this.maxBuffer) {
 				
 
 				this.startDownload();
-			} else {
-				this.initDownloadList = [];
-				this.currFileNum = 0;
-				//console.log("TODO: add callback for when finished");
-			}
+			} 
 		} 
 	}.bind(this);
 	reqw.send();
@@ -343,6 +345,7 @@ PointCloud.prototype.draw = function(pointShader, heightOfNearPlane, mvp) {
 	pointShader.uniforms({
 		u_heightOfNearPlane: heightOfNearPlane,
 		u_mvp: mvp,
+		u_point_size: this.point_size
 	})
 
 
@@ -369,6 +372,7 @@ PointCloud.prototype.draw = function(pointShader, heightOfNearPlane, mvp) {
 		length = buffer.buffer.length / buffer.buffer.spacing;
 	}
 	var offset = 0;
+	var length = this.currDrawBufferPosition;
 	if (length) {
 		gl.drawArrays(mode, 0, length);
 	}
