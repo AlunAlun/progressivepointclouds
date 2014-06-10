@@ -20,6 +20,9 @@
 		B76421FB18CDCF1C0023DE28 /* setColorFragShader.fsh in CopyFiles */ = {isa = PBXBuildFile; fileRef = A71412B818A532E200DB3ACA /* setColorFragShader.fsh */; };
 		B76421FC18CDD0060023DE28 /* lineShader.vsh in CopyFiles */ = {isa = PBXBuildFile; fileRef = A79DB61F18898C60001712E3 /* lineShader.vsh */; };
 		B76421FD18CDD0060023DE28 /* lineShader.fsh in CopyFiles */ = {isa = PBXBuildFile; fileRef = A79DB61D18898C46001712E3 /* lineShader.fsh */; };
+		B77FF2741946F25500B92783 /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B77FF2721946F25500B92783 /* Shader.cpp */; };
+		B77FF2781946FE2F00B92783 /* FileLoaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B77FF2761946FE2F00B92783 /* FileLoaders.cpp */; };
+		B77FF27B194705A500B92783 /* Geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B77FF279194705A500B92783 /* Geometry.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -287,6 +290,12 @@
 		A79DB61B18897BE8001712E3 /* octree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = octree.cpp; sourceTree = "<group>"; };
 		A79DB61D18898C46001712E3 /* lineShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = lineShader.fsh; sourceTree = "<group>"; };
 		A79DB61F18898C60001712E3 /* lineShader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = lineShader.vsh; sourceTree = "<group>"; };
+		B77FF2721946F25500B92783 /* Shader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Shader.cpp; sourceTree = "<group>"; };
+		B77FF2731946F25500B92783 /* Shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shader.h; sourceTree = "<group>"; };
+		B77FF2761946FE2F00B92783 /* FileLoaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileLoaders.cpp; sourceTree = "<group>"; };
+		B77FF2771946FE2F00B92783 /* FileLoaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileLoaders.h; sourceTree = "<group>"; };
+		B77FF279194705A500B92783 /* Geometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Geometry.cpp; sourceTree = "<group>"; };
+		B77FF27A194705A500B92783 /* Geometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Geometry.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -325,18 +334,19 @@
 		A70D19361886A29C0004EA7C /* PointCloudsGL */ = {
 			isa = PBXGroup;
 			children = (
-				A70D1A2F1886D6870004EA7C /* vertexShader.vsh */,
-				A70D1A2E1886D6870004EA7C /* fragmentShader.fsh */,
-				A71412BA18A5330B00DB3ACA /* setColorVertShader.vsh */,
-				A71412B818A532E200DB3ACA /* setColorFragShader.fsh */,
+				B77FF2751946FCA300B92783 /* Shaders */,
 				A751D37418A281A200A32FD7 /* clipper.h */,
 				A751D37318A281A200A32FD7 /* clipper.cpp */,
-				A79DB61F18898C60001712E3 /* lineShader.vsh */,
-				A79DB61D18898C46001712E3 /* lineShader.fsh */,
 				A70D1A2B1886D66F0004EA7C /* imageloader.cpp */,
 				A70D1A2C1886D66F0004EA7C /* imageloader.h */,
 				A79DB61A18897A52001712E3 /* octree.h */,
 				A79DB61B18897BE8001712E3 /* octree.cpp */,
+				B77FF2731946F25500B92783 /* Shader.h */,
+				B77FF2721946F25500B92783 /* Shader.cpp */,
+				B77FF2771946FE2F00B92783 /* FileLoaders.h */,
+				B77FF2761946FE2F00B92783 /* FileLoaders.cpp */,
+				B77FF27A194705A500B92783 /* Geometry.h */,
+				B77FF279194705A500B92783 /* Geometry.cpp */,
 				A70D19371886A29C0004EA7C /* main.cpp */,
 				A70D19391886A29C0004EA7C /* PointCloudsGL.1 */,
 			);
@@ -617,6 +627,19 @@
 			name = assets;
 			sourceTree = "<group>";
 		};
+		B77FF2751946FCA300B92783 /* Shaders */ = {
+			isa = PBXGroup;
+			children = (
+				A79DB61F18898C60001712E3 /* lineShader.vsh */,
+				A79DB61D18898C46001712E3 /* lineShader.fsh */,
+				A70D1A2F1886D6870004EA7C /* vertexShader.vsh */,
+				A70D1A2E1886D6870004EA7C /* fragmentShader.fsh */,
+				A71412BA18A5330B00DB3ACA /* setColorVertShader.vsh */,
+				A71412B818A532E200DB3ACA /* setColorFragShader.fsh */,
+			);
+			name = Shaders;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -672,6 +695,9 @@
 				A751D37518A281A200A32FD7 /* clipper.cpp in Sources */,
 				A79DB61C18897BE8001712E3 /* octree.cpp in Sources */,
 				A70D19381886A29C0004EA7C /* main.cpp in Sources */,
+				B77FF27B194705A500B92783 /* Geometry.cpp in Sources */,
+				B77FF2741946F25500B92783 /* Shader.cpp in Sources */,
+				B77FF2781946FE2F00B92783 /* FileLoaders.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -67,14 +67,15 @@ public:
     void InsertObject(Node *pTree, Object *pObject, int currDepth, int maxDepth);
     
     void CalculateColors(Node *pTree);
-    glm::vec3 CalculateColors2(Node *pTree);
-    std::vector<Node*> GetNodesAtDepth(Node *pTree, int desiredDepth);
+    
     void exportWholeOctree(Node *pTree, int octreeSize, std::string directory);
     void exportWholeOctreeArray(Node *pTree, int octreeSize, std::string directory);
     std::vector<int> readOctreeIndicesFromFile(std::string indexFile);
     Node* readOctreeFromFile(std::string rootNodeName, std::string rootFile);
-    void readOctreeFromFileToMap(std::map<std::string, Node*>& octreeNodesMap,
-                                 std::string rootFile, int findParent);
+    void readOctreeFromFileToMap(std::map<std::string, Node*>& octreeNodesMap, std::string rootFile, int findParent);
+    
+    std::vector<Node*> GetNodesAtDepth(Node *pTree, int desiredDepth);
+    void getOctreeBufferSize(Node *pTree);
 
 };
 

@@ -196,35 +196,6 @@ void Octree::CalculateColors(Node * pTree) {
     PropagateColors(pTree);
 }
 
-glm::vec3 Octree::CalculateColors2(Node *pTree){
-    glm::vec3 newColor(0.0,0.0,0.0);
-    int counter = 0;
-    
-    for (int i = 0; i < 8; i++) {
-        if (pTree->pChild[i]) {
-            newColor += CalculateColors2(pTree->pChild[i]);
-            counter++;
-        }
-    }
-    if (counter > 0) { //the node has children
-        newColor /= (float)counter;
-    }
-    else { //node is bottom node
-        Object *pA;
-        for (pA = pTree->pObjList; pA; pA = pA->pNextObject) {
-            newColor = newColor + pA->color;
-            counter++;
-        }
-        if (counter > 0)
-            newColor /= (float)counter;
-        else
-            newColor.x = 1.0;
-    }
-    
-    return newColor;
-}
-
-
 /*
  * Adds the center point of all occupied nodes at a given octree depth
  */
@@ -250,8 +221,6 @@ vector<Node*> Octree::GetNodesAtDepth(Node *pTree, int desiredDepth) {
     return nodesAtDepth;
     
 }
-
-
 
 
 
@@ -282,7 +251,7 @@ int Octree::exportNodeToBinFile(Node *pTree, string directory, vector<string> &i
                 g,
                 b
             };
-            char mask = 0; char empty = 0;
+            char mask = 0;
 
             currentStream.write((char *)&iDepth,sizeof(int8_t)); //1
             currentStream.write((char *)&fArray,sizeof(float)*3); //12
@@ -319,7 +288,7 @@ int Octree::exportNodeToBinFile(Node *pTree, string directory, vector<string> &i
                             g,
                             b
                             };
-        char mask = 0; char empty = 0;
+        char mask = 0;
         for (int i = 0; i < 8; i++){
             if (pTree->pChild[i] != NULL)
                 mask |= (1 << i);
@@ -530,20 +499,6 @@ void Octree::exportWholeOctreeArray(Node *pTree, int octreeSize, string director
     exportOctreeArrayToBinFile(octreeArr, directory);
     
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 vector<int> Octree::readOctreeIndicesFromFile(std::string indexFile) {
