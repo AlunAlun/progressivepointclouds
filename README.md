@@ -12,5 +12,7 @@ A make file is included in the project and has been tested for MacOS and Ubuntu.
 
 ## Browser client
 Simple WebGL renderer with included test dataset. All the interesting code is in pointclouds.js
-Demos: http://alunevans.info/apps/webgl/pointclouds/old/
+Demos: 
+http://alunevans.info/apps/webgl/pointclouds/?dir=kamruddin
+http://alunevans.info/apps/webgl/pointclouds/old/
 
