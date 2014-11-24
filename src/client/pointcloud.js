@@ -1,4 +1,31 @@
-function PointCloud(minDepth, pointSize, maxBuffer, chSize, downloadedFileCallback, finishedDownloadingCallback, verb){
+
+// Progressive Pointcloud visualisation with WebGL - client application
+
+// Copyright 2014 by Alun Evans <alun@alunthomasevans.co.uk>
+// https://github.com/AlunAlun/progressivepointclouds
+
+// This file is part of the "Progressive Pointclouds for WebGL" application.
+
+// "Progressive Pointclouds for WebGL" is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// "Progressive Pointclouds for WebGL" is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with "Progressive Pointclouds for WebGL".  If not, see <http://www.gnu.org/licenses/>.
+
+// This demo requires dat.gui, liteGL.js and gl-matrix.js to work. All are included in the 
+// project and are available under separate licenses, please see:
+// https://code.google.com/p/dat-gui/
+// http://tamats.com/webglstudio/litegl/
+// http://glmatrix.net/
+
+function PointCloud(minDepth, pointSize, maxBuffer, chSize, verb){
 	this.chunk = chSize || 17;
 	this.octreeMinDepth = minDepth || 6;
 	this.octreeMaxDepth = minDepth || 6;
@@ -15,8 +42,8 @@ function PointCloud(minDepth, pointSize, maxBuffer, chSize, downloadedFileCallba
 	this.totalUpdateTime = 0;
 	this.maxUpdateTime = 0;
 	this.updates = 0;
-	this.downloadedFileCallback = downloadedFileCallback;
-	this.finishedDownloadingCallback = finishedDownloadingCallback;
+	this.downloadedFileCallback = function(downloadText) {console.log(downloadText)};;
+	this.finishedDownloadingCallback = function(finishedText) {console.log(finishedText);};;
 	this.errorCallback = function(errorText) {alert(errorText);};
 	this.localFiles = false;
 

@@ -1,9 +1,49 @@
+<!--
+Progressive Pointcloud visualisation with WebGL - client application
+
+Copyright 2014 by Alun Evans <alun@alunthomasevans.co.uk>
+https://github.com/AlunAlun/progressivepointclouds
+
+This file is part of the "Progressive Pointclouds for WebGL" application.
+
+"Progressive Pointclouds for WebGL" is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+"Progressive Pointclouds for WebGL" is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with "Progressive Pointclouds for WebGL".  If not, see <http://www.gnu.org/licenses/>.
+
+This demo requires dat.gui, liteGL.js and gl-matrix.js to work. All are included in the 
+project and are available under separate licenses, please see:
+https://code.google.com/p/dat-gui/
+http://tamats.com/webglstudio/litegl/
+http://glmatrix.net/
+
+USAGE:
+======
+
+The function initPointCloud() is the best place to start to understand the demo. If you 
+know nothing about LiteGL.js I recommend you go http://tamats.com/webglstudio/litegl/ here
+first to understand it
+
+The three most important lines are 
+cloud = new PointCloud(); // initialise the object
+cloud.initPointCloud(subdir); //specify the path to the .oct files
+cloud.draw(); //actually o the drawing
+-->
+
 <!DOCTYPE html >
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
 
-<!-- Point Shader -->
+<!-- SIMPLE COLOR SHADER FOR RENDERING POINTS -->
   <script id="pointVertShader" type="x-shader/x-vertex">
     precision highp float;
 	attribute vec3 a_vertex;
@@ -55,6 +95,8 @@
 
 <script>
 
+//GLOBAL VARIABLES
+
 //cam + movement variables
 var cam_pos = vec3.fromValues(0, 0, 20);
 var cam_forward = vec3.fromValues(0,0,-1); 
@@ -79,6 +121,9 @@ var model = mat4.create();
 var mvp = mat4.create();
 var mv = mat4.create();
 
+/*
+ * Simple function for extracting the url query parameters
+ */
 function getQueryParams(qs) {
 	qs = qs.split("+").join(" ");
 	var params = {}, tokens,
@@ -90,6 +135,9 @@ function getQueryParams(qs) {
 	return params;
 }
 
+/*
+ * a gluLookAt style function
+ */
 function cameraLookAt(eye, target)
 {
 	cam_pos.set( eye );
@@ -100,6 +148,10 @@ function cameraLookAt(eye, target)
 	vec3.normalize( cam_right, cam_right );
 }
 
+/*
+ * Initialise the graphical user interface in the top right of screen.
+ * uses http://workshop.chromeexperiments.com/examples/gui/
+ */
 var guiOptions = {
 	
 	numPoints: '.',
@@ -109,7 +161,6 @@ var guiOptions = {
 	rotateZ: function() { mat4.rotateZ(cloud.model, cloud.model, -1.57079633);}
 
 };
-
 function initGUI() {
 
 
@@ -124,36 +175,40 @@ function initGUI() {
 		folder.add(guiOptions, 'rotateZ' );
 }
 
-function initPointCloud(subdir, local) {
-	//usual stuff
+/*
+ * Main entry point for application
+ * subdir: the subdirectory which contains the .oct files
+ * localOrRemote: boolean stating whether we are using http:// or file://
+ */
+function initPointCloud(subdir, localOrRemote) {
+
+	//setup liteGL
 	var gl = GL.create({width:document.documentElement.clientWidth,height:document.documentElement.clientHeight});
 	gl.animate();
 	var container = document.querySelector("#content");
 	container.appendChild(gl.canvas);
 
-	// one shader for points, one for textures
+	// create shader
 	var pointShader = new Shader(document.getElementById( 'pointVertShader' ).textContent, 
 							document.getElementById( 'pointFragShader' ).textContent);
 
-	//callback to display current number of points
-	function onDownloadFile (text) {
 
-	
+	// INIT POINT CLOUD
+	cloud = new PointCloud();
+
+	//callback to display current number of points
+	cloud.downloadedFileCallback = function(text) {
 		guiOptions.numPoints = text;
 		cloud.getAABB();
 	};
 
 	//callback to display when finished downloading
-	function onFinish (text) {
-		// document.getElementById('geometrystatusbar').textContent = "Finished";
+	cloud.finishedDownloadingCallback = function(text) {
 		guiOptions.status = "finished";
 	};
 
-	cloud = new PointCloud(6, 2.5, 3500000, 17, onDownloadFile, onFinish);
-
-	//set flag for remote/local
-	cloud.localFiles = local;
-
+	//set flag for remote/local (we found this by parsing ur)
+	cloud.localFiles = localOrRemote;
 	//set model matrix to match cameras
 	cloud.model = mat4.translationMatrix([0.01, 0.01, 0,01]);	
 	//init with callback function to init GL
@@ -173,9 +228,10 @@ function initPointCloud(subdir, local) {
 	gl.enable( gl.DEPTH_TEST );
 	gl.disable( gl.CULL_FACE);
 
-	//rendering loop
+	//rendering loop, called once per frame
 	gl.ondraw = function()
-	{
+	{	
+		//viewport and background colour
 		gl.viewport(0,0,gl.canvas.width, gl.canvas.height);
 		gl.clearColor(0.2,0.2,0.2,1);
 		gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
@@ -184,10 +240,9 @@ function initPointCloud(subdir, local) {
 		vec3.add( cam_target, cam_pos, cam_forward );
 		mat4.lookAt(view, cam_pos, cam_target, [0,1,0]);
 
-		//draw point cloud
+		//draw point cloud (if it is initialised)
 		if(cloud && cloud.ready)
 		{
-			cloud.point_size = 1;
 			mat4.multiply(mv,view,cloud.model);
 			mat4.multiply(mvp,persp,mv);
 			cloud.draw(pointShader, heightOfNearPlane, mvp);
@@ -195,6 +250,7 @@ function initPointCloud(subdir, local) {
 
 	};
 
+	//update function
 	gl.onupdate = function(dt) 
 	{
 		if(cloud && cloud.ready)
@@ -280,18 +336,27 @@ function initPointCloud(subdir, local) {
 	}
 }
 
+/**************************************************
+ * ENTRY POINT FOR APPLICATION
+ **************************************************/
+
+//get url query parameters
 var query = getQueryParams(document.location.search);
 if (query.dir === undefined ) {
-
+	//you could add some custom error message here if required
 }
 else {
 	//hide error GUI
 	document.getElementById("loadingmessage").style.display = "none";
 
-	//check if we are local or remote
+	//check if we are local or remote by checking url for presence of "file://""
 	var local = false;
 	if (document.location.href.lastIndexOf("file:/", 0) >= 0) local = true;
+
+	//init the GUI
 	initGUI();
+
+	//init the pointcloud
 	initPointCloud(query.dir + "/", local);
 }
 
