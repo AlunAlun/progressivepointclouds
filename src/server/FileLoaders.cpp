@@ -11,14 +11,15 @@
 using namespace std;
 using namespace glm;
 
-void FileLoaders::readOFFFile(const char* filename, vector<vec3> & VERTEX, vector<vec3> & COLOR){
+int FileLoaders::readOFFFile(const char* filename, vector<vec3> & VERTEX, vector<vec3> & COLOR){
     string line;
     string word;
     
     //Open the OFF file
     ifstream f(filename);
-    if(!f.is_open())
-        printf("Error Opening the file");
+    if(!f.is_open()){
+        return 0;
+    }
     
     int counter = 0;
     int numVerts = 100000000;
@@ -35,7 +36,7 @@ void FileLoaders::readOFFFile(const char* filename, vector<vec3> & VERTEX, vecto
             int r = 0, g = 0, b = 0;
             float x = 0, y = 0, z = 0;
             
-            sscanf (line.c_str(), "%f %f %f %d %d %d %*d", &x, &z, &y, &r,&g,&b);
+            sscanf (line.c_str(), "%f %f %f %d %d %d %*d", &x, &y, &z, &r,&g,&b);
             
             vec3 newVert(-x,y,z);
             vec3 newColor(r/255.0f, g/255.0f, b/255.0f);
@@ -46,16 +47,19 @@ void FileLoaders::readOFFFile(const char* filename, vector<vec3> & VERTEX, vecto
         counter++;
     }
     printf("done.\n");
+    return 1;
 }
 
-void FileLoaders::readXrgbFile(const char* filename, vector<vec3> & VERTEX, vector<vec3> & COLOR){
+int FileLoaders::readXrgbFile(const char* filename, vector<vec3> & VERTEX, vector<vec3> & COLOR){
     string line;
     string word;
     
     //Open the OFF file
     ifstream f(filename);
-    if(!f.is_open())
-        printf("Error Opening the file");
+    if(!f.is_open()){
+
+        return 0;
+    }
     
     int counter = 0;
     int index = 0;
@@ -75,17 +79,20 @@ void FileLoaders::readXrgbFile(const char* filename, vector<vec3> & VERTEX, vect
         counter++;
     }
     printf("done: %d\n", counter);
+    return 1;
 }
 
 
-void FileLoaders::readPLYFile(const char* filename, vector<vec3> & VERTEX, vector<vec3> & COLOR){
+int FileLoaders::readPLYFile(const char* filename, vector<vec3> & VERTEX, vector<vec3> & COLOR){
     string line;
     string word;
     
     //Open the PLY file
     ifstream f(filename);
-    if(!f.is_open())
-        printf("Error Opening the file");
+    if(!f.is_open()){
+
+        return 0;
+    }
     
     int counter = 0;
 
@@ -105,10 +112,10 @@ void FileLoaders::readPLYFile(const char* filename, vector<vec3> & VERTEX, vecto
         if (!startReading || numPoints == 0) continue;
         
         vec3 newVert;
+        int r = 255, g = 255, b = 255;
+        sscanf (line.c_str(), "%f %f %f %d %d %d", &newVert.x, &newVert.y, &newVert.z,&r,&g,&b);
         
-        sscanf (line.c_str(), "%f %f %f", &newVert.x, &newVert.y, &newVert.z);
-        
-        vec3 newColor(1.0, 1.0, 1.0);
+        vec3 newColor(r/255.0, g/255.0, b/255.0);
         
         VERTEX.push_back(newVert);
         COLOR.push_back(newColor);
@@ -117,4 +124,5 @@ void FileLoaders::readPLYFile(const char* filename, vector<vec3> & VERTEX, vecto
         if (counter == numPoints) break;
     }
     printf("done: %d\n", counter);
+    return 1;
 }

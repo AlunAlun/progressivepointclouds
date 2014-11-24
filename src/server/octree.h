@@ -14,7 +14,7 @@
 #include <map>
 
 #include <fstream>
-#include "glm.hpp"
+#include <glm/glm.hpp>
 
 struct Object {
     glm::vec3 center;
@@ -76,6 +76,8 @@ public:
     
     std::vector<Node*> GetNodesAtDepth(Node *pTree, int desiredDepth);
     void getOctreeBufferSize(Node *pTree);
+    
+    void updatePointColorsFromOctree(Node *pTree, std::vector<glm::vec3>& COLOR);
 
 };
 

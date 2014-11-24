@@ -1,5 +1,6 @@
 #include "octree.h"
 #include <math.h>
+//#include "PCA.h"
 
 
 
@@ -58,7 +59,6 @@ Node* Octree::InitOctree(glm::vec3 center, float halfWidth, int pointDens, int a
 
 void Octree::InsertObject(Node *pTree, Object *pObject, int currDepth, int maxDepth){
     
-    //cout << pTree->name << " " << pTree->numObjects << "\n";
     
     if (!pTree->hasChildren) { //we haven't split yet, so add object to this node
         
@@ -152,6 +152,7 @@ void PopulateColors(Node *pTree)
     if (counter > 0) {
         newColor = newColor / (float)counter;
         pTree->colorSet = true;
+
     }
     else {
         newColor = glm::vec3(1.0,1.0,1.0);
@@ -194,6 +195,22 @@ void PropagateColors(Node *pTree) {
 void Octree::CalculateColors(Node * pTree) {
     PopulateColors(pTree);
     PropagateColors(pTree);
+}
+
+void Octree::updatePointColorsFromOctree(Node *pTree, std::vector<glm::vec3>& COLOR) {
+    Object *pA = pTree->pObjList;
+    for (int i = 0; i < pTree->numObjects; i++){
+        COLOR.push_back(pA->color);
+        pA = pA->pNextObject;
+    }
+    //down the hole
+    for (int i = 0; i < 8; i++) {
+        if (pTree->pChild[i])
+        {
+            updatePointColorsFromOctree(pTree->pChild[i], COLOR);
+        }
+    }
+    
 }
 
 /*
@@ -319,7 +336,7 @@ void Octree::exportWholeOctree(Node *pTree, int octreeSize, string directory) {
     currentFileToWrite = directory + "r.oct";
     maxDepth = 0;
     
-    printf("maxTreeDepth %d, fileThreshold %d\n", maxTreeDepth, fileThreshold);
+    printf("maxTreeDepth: %d, fileThreshold: %d\n", maxTreeDepth, fileThreshold);
     
     currentStream.open (currentFileToWrite,std::ios_base::binary);
     Node* traverse;
@@ -348,9 +365,9 @@ void Octree::exportWholeOctree(Node *pTree, int octreeSize, string directory) {
 
     }
     printf("\n");
-    printf("octreeArrIndex %d\n", octreeArrIndex);
-    printf("size Array %lu\n", octreeArr.size());
-    printf("numLines %d\n", numberOfLines);
+//    printf("octreeArrIndex %d\n", octreeArrIndex);
+//    printf("size Array %lu\n", octreeArr.size());
+    printf("Total number of entries written: %d\n", numberOfLines);
     
     
     

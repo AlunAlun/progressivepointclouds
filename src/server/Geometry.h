@@ -11,7 +11,7 @@
 
 #include <iostream>
 #include <vector>
-#include "glm.hpp"
+#include <glm/glm.hpp>
 using namespace std;
 using namespace glm;
 
