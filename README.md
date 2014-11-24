@@ -11,7 +11,8 @@ A make file is included in the project and has been tested for MacOS and Ubuntu.
 ./webpointcloud <infile.off> <output_directory> [-oct: Maximum depth of octree] [-epf: number of octree entries per file] [-ppn: Maximum number of points per octree node]
 
 ## Browser client
-Simple WebGL renderer with included test dataset. All the interesting code is in pointclouds.js
+Simple WebGL renderer with included test dataset. All the interesting code is in pointclouds.js.
+
 Demos: 
 
 http://alunevans.info/apps/webgl/pointclouds/?dir=kamruddin
