@@ -39,11 +39,7 @@
 
 </head>
 <body>
-	<!-- div id="messagebox" style="position: absolute; left: 50%; display:none; font-size:10px; font-family:courier">
-        <div style="position: relative; left: -50%;">
-            Look: Mouse<br />Move: WASD
-        </div>
-    </div> -->
+
 <div id="wrap">
 	<div id="main">
 		<div id="content">
@@ -54,9 +50,7 @@
 	</div>
 </div>
 <div id="controls">
-	<p>Move: WASD + left-click-drag
-	<p id="downloadstatusbar"></p>
-	<p id="geometrystatusbar"></p>
+	<p>Move: WASD + left-click-drag</p>
 </div>
 
 <script>
@@ -122,8 +116,8 @@ function initGUI() {
 
 	gui = new dat.GUI();
 	
-	gui.add(guiOptions, 'numPoints').listen();
-	gui.add(guiOptions, 'status').listen();
+	gui.add(guiOptions, 'numPoints').name("# points").listen();
+	gui.add(guiOptions, 'status').name("Status").listen();
 	var folder = gui.addFolder('Rotate 90 degrees');
 		folder.add(guiOptions, 'rotateX' );
 		folder.add(guiOptions, 'rotateY' );
