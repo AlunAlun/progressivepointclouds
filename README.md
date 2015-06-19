@@ -15,7 +15,7 @@ Simple WebGL renderer with included test dataset. All the interesting code is in
 
 Demos: 
 
-http://alunevans.info/apps/webgl/pointclouds/?dir=test
+http://webglstudio.org/impart/setviewer-dev/index.html?scene=studio.json
 
 http://alunevans.info/apps/webgl/pointclouds/old/
 
