@@ -1,7 +1,7 @@
 # Progressive Pointclouds in WebGL
 ================================
 
-Library for loading progressive point clouds in WebGL. It is formed of two parts, a server (offline) component and a web-based client. The offline component processes raw pointcloud data and outputs a series of files which are downloaded by the client in order to progressively render the pointcloud dataset
+Library for loading progressive point clouds in WebGL. It is formed of two parts, an offline component and a web-based client. The offline component processes raw pointcloud data and outputs a series of files which are downloaded by the client in order to progressively render the pointcloud dataset
 
 ## Offline Component
 ### Compiling
